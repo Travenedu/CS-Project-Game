@@ -1,66 +1,68 @@
 import pygame
 pygame.init()
 
-from pygame.locals import (K_UP, K_DOWN, K_LEFT, K_RIGHT, KEYDOWN, K_SPACE, K_ESCAPE)
-from constants import WIDTH, HEIGHT, first_object, second_object, FPS
+from Fighter.constants import FPS, screen, WIDTH
+from Fighter.Drawer import Draw, Knight
 
-screen = pygame.display.set_mode([WIDTH, HEIGHT])
-
-#testing drawing
-def first_object_draw(positionx, positiony):
-    screen.blit(first_object, (positionx, positiony))
-
-def second_object_draw(positionx, positiony):
-    screen.blit(second_object, (positionx, positiony))
 
 #caption And Icon
-pygame.display.set_caption('Not decided')
-pygame.display.set_icon(first_object)
-
-
+pygame.display.set_caption('Kings Fight')
 
 def main():
-    first_objectX, first_objectY = 370, 20
-    second_objectX, second_objectY = 370, 480
     running = True
     clock = pygame.time.Clock()
+    move_left = False
+    move_right = False
+
+    knight1 =  Knight(200, 200, 3, 5)
+
+
 
     while running:
         clock.tick(FPS)
+
+        screen.fill((0,0,0))
+        pygame.draw.line(screen, (255,0,0), (0, 300), (WIDTH, 300))
+
+        knight1.update_animation()
+        knight1.knight_draw()
+
+        if knight1.alive:
+            if knight1.in_air:
+                knight1.update_action(1)#need jump animation
+            elif move_left or move_right:
+                knight1.update_action(1)
+            else:
+                knight1.update_action(0)
+            knight1.moving(move_left, move_right)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    running = False          
-            
-                if event.key == K_RIGHT:
-                    second_objectX = second_objectX + 30
-            
-                if event.key == K_LEFT:
-                    second_objectX = second_objectY - 30
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    move_left = True
+                if event.key == pygame.K_d:
+                    move_right = True
+                if event.key == pygame.K_w and knight1.alive:
+                    knight1.jump = True
+                if event.key == pygame.K_ESCAPE:
+                    running = False      
 
-                if event.key == K_UP:
-                    second_objectY = second_objectY - 30
-            
-                if event.key == K_SPACE:
-                    pass
-                    #second_objectY = second_objectY - 30
-
-                if event.key == K_DOWN:
-                    second_objectY = second_objectY + 30
-
-            first_objectX = first_objectX + 1
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_a:
+                    move_left = False
+                if event.key == pygame.K_d:
+                    move_right = False
 
 
-        screen.fill((0,0,0))
 
-        first_object_draw(first_objectX, first_objectY)
-        second_object_draw(second_objectX, second_objectY)
+
+        #Draw.castle_draw()
+        #Knight.knight_draw(knightX, knightY)
+
         pygame.display.update()
-        #pygame.display.flip()
 
     pygame.quit()
 
