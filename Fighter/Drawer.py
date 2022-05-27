@@ -1,15 +1,14 @@
 import pygame
 from .constants import screen, Gravity, game_font, WIDTH
 
-
 class Draw:
     def __init__(self, postionx, positiony):
         self.postionX = postionx
         self.postionY = positiony
 
     def draw_floor(back_ground, floor_x_pos):
-        screen.blit(back_ground, (floor_x_pos, -23))
-        screen.blit(back_ground, (floor_x_pos + 576, -23))
+        screen.blit(back_ground, (floor_x_pos, -300))
+        screen.blit(back_ground, (floor_x_pos + 576, -300))
 
     def score_display(game_state, score, high_score):
         if game_state == 'main_game':
@@ -40,7 +39,7 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = speed
         self.direction = 1
         self.flip = False
-        self.Enemy_image =  pygame.image.load('assets/box.png')
+        self.Enemy_image =  pygame.transform.scale(pygame.image.load('assets/box.png'), (65, 65))
         self.rect = self.Enemy_image.get_rect()
         self.rect.center = (x, y)
 
@@ -60,12 +59,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self, knight):
         self.moving()
-
-        if pygame.sprite.spritecollide(knight, box_group, False):
-            if knight.alive:
-                knight.health = 0
         screen.blit(self.Enemy_image, self.rect)
-
 
 box_group = pygame.sprite.Group()
 class Knight(pygame.sprite.Sprite):
@@ -116,17 +110,28 @@ class Knight(pygame.sprite.Sprite):
             self.direction = 1
 
         if self.jump == True and self.in_air == False:
-            self.velocity_y = -13
+            self.velocity_y = -14#-13
             self.jump = False
             self.in_air = True
 
         self.velocity_y += Gravity
-        if self.velocity_y > 10:
-            self.velocity_y = 10
+        if self.velocity_y > 11:#10
+            self.velocity_y = 11#10
         changeinY  += self.velocity_y
 
-        if self.rect.bottom + changeinY > 793:
-            changeinY = 793 - self.rect.bottom
+        #check collision with box
+        for box in box_group:
+            if self.rect.colliderect(box):
+                if abs(self.rect.bottom - box.rect.top) < 10:
+                    changeinY = 0
+                    self.in_air = False
+                    
+                elif self.rect.colliderect(box):
+                    if self.alive:
+                        self.health = 0
+
+        if self.rect.bottom + changeinY > 490:#793
+            changeinY = 490 - self.rect.bottom
             self.in_air = False
 
         self.rect.x += changeinX

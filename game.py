@@ -17,18 +17,17 @@ def main():
     high_score = 0
     floor_x_pos = 0
     game_over = False
-    knight1 = Knight(200, 30, 3, 5)
+    knight1 = Knight(200, 475, 3.5, 4.5)
     
-    max_box = 10
-    enemy_list = [1000, 1010, 1100, 500, 990, 800]
+    max_box = 9#10
+    enemy_list = [1000, 1010, 600, 1100, 990, 800]
     
     last_enemy = pygame.time.get_ticks()
-
 
     while running:
         clock.tick(FPS)
         if game_over == False:
-            screen.fill((0,0,0))
+            screen.fill((0,90,0))
             enemy_timer = random.choice(enemy_list)
             #Floor
             floor_x_pos -= 1
@@ -42,7 +41,7 @@ def main():
             box_group.update(knight1)
             if len(box_group) < max_box:
                 if pygame.time.get_ticks() - last_enemy > enemy_timer:
-                    box = Enemy(1200, 775, 5)
+                    box = Enemy(1200, 475, 5)
                     box_group.add(box)
                     last_enemy = pygame.time.get_ticks()
 
@@ -62,7 +61,7 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-
+                #Knight Movement
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_a:
                         move_left = True
@@ -71,21 +70,20 @@ def main():
                     if event.key == pygame.K_SPACE and knight1.alive:
                         knight1.jump = True
                     if event.key == pygame.K_ESCAPE:
-                        running = False      
+                        running = False
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_a:
                         move_left = False
                     if event.key == pygame.K_d:
                         move_right = False
-
+            #Game over Mechanic
             if knight1.health == 0:
                 game_over = True
 
             if game_over == True:
                 high_score = Draw.update_score(score, high_score)
                 Draw.score_display('game_over', score, high_score)
-
 
         else:
             for event in pygame.event.get():
@@ -96,13 +94,11 @@ def main():
                     if event.key == pygame.K_a:
                         game_over = False
                         box_group.empty()
-                        knight1 = Knight(200, 30, 3, 5)
+                        knight1 = Knight(200, 475, 3.5, 4.5)
                         score = 0.5
                         knight1.health = 100
 
         pygame.display.update()
-
     pygame.quit()
-
 main()
 
