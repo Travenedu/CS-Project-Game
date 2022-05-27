@@ -1,3 +1,3 @@
-# CS-Project-Game
- This is a game we are build for our computer science course
+Knights Run
+2d game made in python based off of the google dino game.
 Controls: A,W,D to move; SPACE to jump.
